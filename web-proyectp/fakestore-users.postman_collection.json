@@ -1,0 +1,221 @@
+﻿{
+  "info": {
+    "_postman_id": "c1f7a409-b94d-4820-9426-3847e68fa799",
+    "name": "Marketing Manager - FakeStore Users API",
+    "description": "Colección completa de pruebas para la API REST de Usuarios (FakeStoreAPI) consumida por el sistema Marketing Manager.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET - Listar todos los usuarios",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response is an array of users\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.be.an(\"array\");",
+              "    pm.expect(jsonData.length).to.be.above(0);",
+              "});",
+              "pm.test(\"User object contains required fields\", function () {",
+              "    var user = pm.response.json()[0];",
+              "    pm.expect(user).to.have.property(\"id\");",
+              "    pm.expect(user).to.have.property(\"username\");",
+              "    pm.expect(user).to.have.property(\"email\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": ["{{base_url}}"],
+          "path": ["users"]
+        },
+        "description": "Obtiene la lista completa de usuarios registrados en FakeStoreAPI."
+      },
+      "response": []
+    },
+    {
+      "name": "2. GET - Obtener usuario por ID (ID: 1)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"User ID matches requested ID\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.id).to.eql(1);",
+              "    pm.expect(jsonData.username).to.eql(\"johnd\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/users/1",
+          "host": ["{{base_url}}"],
+          "path": ["users", "1"]
+        },
+        "description": "Consulta los datos del usuario con ID 1."
+      },
+      "response": []
+    },
+    {
+      "name": "3. POST - Crear nuevo usuario",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK (Created)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response returns an ID for the new user\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property(\"id\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"nuevo.usuario@innovasoft.com\",\n    \"username\": \"nuevouser\",\n    \"password\": \"PasswordSegura123*\",\n    \"name\": {\n        \"firstname\": \"Carlos\",\n        \"lastname\": \"Pérez\"\n    },\n    \"address\": {\n        \"city\": \"Monterrey\",\n        \"street\": \"Av. Constitución\",\n        \"number\": 100,\n        \"zipcode\": \"64000\",\n        \"geolocation\": {\n            \"lat\": \"25.6866\",\n            \"long\": \"-100.3161\"\n        }\n    },\n    \"phone\": \"81-1234-5678\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": ["{{base_url}}"],
+          "path": ["users"]
+        },
+        "description": "Crea un nuevo usuario con payload completo."
+      },
+      "response": []
+    },
+    {
+      "name": "4. PUT - Actualizar usuario existente (ID: 1)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response echoes updated fields\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.email).to.eql(\"john.updated@gmail.com\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"john.updated@gmail.com\",\n    \"username\": \"johnd_editado\",\n    \"password\": \"NewPassword2026*\",\n    \"name\": {\n        \"firstname\": \"John\",\n        \"lastname\": \"Doe Modificado\"\n    },\n    \"phone\": \"1-570-236-7033\",\n    \"address\": {\n        \"city\": \"Monterrey\",\n        \"street\": \"Av. Innovasoft\",\n        \"number\": 500,\n        \"zipcode\": \"64000\"\n    }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/users/1",
+          "host": ["{{base_url}}"],
+          "path": ["users", "1"]
+        },
+        "description": "Actualiza la información del usuario con ID 1."
+      },
+      "response": []
+    },
+    {
+      "name": "5. DELETE - Eliminar usuario (ID: 1)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Deleted user payload returned\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property(\"id\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/users/1",
+          "host": ["{{base_url}}"],
+          "path": ["users", "1"]
+        },
+        "description": "Elimina al usuario con ID 1."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://fakestoreapi.com",
+      "type": "string"
+    }
+  ]
+}

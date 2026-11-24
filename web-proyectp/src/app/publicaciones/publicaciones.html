@@ -1,0 +1,192 @@
+<app-navbar></app-navbar>
+
+<!-- Header de Página -->
+<div class="py-5" style="background-color: var(--primary);">
+  <div class="container py-4 text-center text-white">
+    <span class="badge rounded-pill px-3 py-2 text-uppercase fw-bold mb-3" style="background-color: var(--secondary); letter-spacing: 0.5px;">
+      Contenido y Creatividad
+    </span>
+    <h1 class="display-5 fw-bold mb-3">Publicaciones de Redes Sociales</h1>
+    <p class="lead text-white-50 mx-auto" style="max-width: 740px;">
+      Explora las publicaciones, carruseles y reels diseñados y programados para las marcas que confían en Marketing Manager.
+    </p>
+  </div>
+</div>
+
+<section class="py-5" style="background-color: var(--bg-light);">
+  <div class="container py-3">
+    
+    <!-- Filtros de Plataforma -->
+    <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+      <button class="btn btn-sm rounded-pill px-4 py-2 fw-semibold"
+              [class.btn-primary]="filtroPlataforma() === 'todas'"
+              [class.btn-outline-secondary]="filtroPlataforma() !== 'todas'"
+              (click)="filtroPlataforma.set('todas')">
+        Todas
+      </button>
+      <button class="btn btn-sm rounded-pill px-4 py-2 fw-semibold"
+              [class.btn-primary]="filtroPlataforma() === 'Facebook'"
+              [class.btn-outline-secondary]="filtroPlataforma() !== 'Facebook'"
+              (click)="filtroPlataforma.set('Facebook')">
+        <i class="bi bi-facebook me-1 text-primary"></i> Facebook
+      </button>
+      <button class="btn btn-sm rounded-pill px-4 py-2 fw-semibold"
+              [class.btn-primary]="filtroPlataforma() === 'Instagram'"
+              [class.btn-outline-secondary]="filtroPlataforma() !== 'Instagram'"
+              (click)="filtroPlataforma.set('Instagram')">
+        <i class="bi bi-instagram me-1 text-danger"></i> Instagram
+      </button>
+    </div>
+
+    <!-- Spinner de Carga -->
+    @if (cargando()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando publicaciones...</span>
+        </div>
+        <p class="text-muted mt-2">Cargando publicaciones desde MockAPI...</p>
+      </div>
+    } @else if (error()) {
+      <div class="alert alert-warning text-center mx-auto" style="max-width: 600px;" role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-4 d-block mb-2 text-warning"></i>
+        <h5 class="fw-bold">Conexión con MockAPI</h5>
+        <p class="mb-3 small">{{ error() }}</p>
+        <button class="btn btn-sm btn-outline-primary" (click)="cargar()">Reintentar</button>
+      </div>
+    } @else {
+      
+      <!-- Cuadrícula de Publicaciones -->
+      <div class="row g-4">
+        @for (pub of publicacionesFiltradas(); track pub.id) {
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white pub-card">
+              
+              <!-- Imagen de la Publicación -->
+              <div class="pub-img-wrapper position-relative">
+                <img [src]="pub.imagen || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80'"
+                     [alt]="pub.titulo"
+                     class="card-img-top pub-img"
+                     loading="lazy">
+                
+                <!-- Badge de Tipo -->
+                <span class="position-absolute top-0 end-0 m-3 badge rounded-pill bg-dark bg-opacity-75 text-white small">
+                  <i class="bi"
+                     [class.bi-image]="pub.tipo === 'Imagen'"
+                     [class.bi-images]="pub.tipo === 'Carrusel'"
+                     [class.bi-camera-reels]="pub.tipo === 'Reel'"></i>
+                  {{ pub.tipo }}
+                </span>
+
+                <!-- Badge de Plataforma -->
+                <span class="position-absolute bottom-0 start-0 m-3 badge rounded-pill"
+                      [class.bg-primary]="pub.plataforma === 'Facebook'"
+                      [class.bg-danger]="pub.plataforma === 'Instagram'">
+                  <i class="bi" [class.bi-facebook]="pub.plataforma === 'Facebook'" [class.bi-instagram]="pub.plataforma === 'Instagram'"></i>
+                  {{ pub.plataforma }}
+                </span>
+              </div>
+
+              <!-- Contenido de la Tarjeta -->
+              <div class="card-body p-4 d-flex flex-column">
+                <h5 class="fw-bold mb-2 text-dark">{{ pub.titulo }}</h5>
+                <p class="text-muted small mb-3 flex-grow-1">{{ pub.descripcion }}</p>
+                
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top text-muted small mt-auto">
+                  <span><i class="bi bi-calendar3 me-1"></i> {{ pub.fecha || 'Reciente' }}</span>
+                  <span class="text-secondary fw-semibold">
+                    <i class="bi bi-heart-fill text-danger me-1"></i> {{ pub.likes || 120 }}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        } @empty {
+          <div class="col-12 text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+            <h5 class="fw-bold text-muted">Aún no hay publicaciones registradas en MockAPI</h5>
+            <p class="text-muted small">Puedes darlas de alta desde el panel de administración.</p>
+          </div>
+        }
+      </div>
+
+    }
+
+  </div>
+</section>
+
+<!-- Footer Unificado -->
+<footer class="pt-5 pb-4 text-white mt-auto" style="background-color: var(--primary);">
+  <div class="container">
+    <div class="row g-4 pb-4 border-bottom border-white border-opacity-25">
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <img src="imagenes/logo.jpeg" alt="Logo" width="38" height="38" class="rounded border border-light">
+          <span class="fs-4 fw-bold text-white">Marketing Manager</span>
+        </div>
+        <p class="text-white-50 small mb-3">
+          Gestión profesional de redes sociales, producción de contenidos y campañas en Facebook e Instagram para empresas en crecimiento.
+        </p>
+        <div class="text-white-50 small">
+          En alianza estratégica con <a href="https://brandingdigital.com.mx/" target="_blank" class="fw-bold text-decoration-none" style="color: var(--secondary);">Branding Digital</a> (Monterrey, N.L.).
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <h5 class="fw-bold mb-3 text-white">
+          <i class="bi bi-geo-alt-fill me-2" style="color: var(--secondary);"></i>Información de Contacto
+        </h5>
+        <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2 mb-0">
+          <li class="d-flex align-items-start gap-2">
+            <i class="bi bi-pin-map text-white mt-1"></i>
+            <span><strong>Ubicación:</strong> Córdoba, Veracruz, México.<br><span class="text-white-50">Atención remota a todo México.</span></span>
+          </li>
+          <li class="d-flex align-items-center gap-2">
+            <i class="bi bi-envelope text-white"></i>
+            <span><strong>Correo:</strong> <a href="mailto:contacto@marketingmanager.mx" class="text-white-50 text-decoration-none">contacto&#64;marketingmanager.mx</a></span>
+          </li>
+          <li class="d-flex align-items-center gap-2">
+            <i class="bi bi-telephone text-white"></i>
+            <span><strong>Teléfono / WhatsApp:</strong> <a href="tel:+528112345678" class="text-white-50 text-decoration-none">+52 (81) 1234-5678</a></span>
+          </li>
+          <li class="d-flex align-items-center gap-2">
+            <i class="bi bi-clock text-white"></i>
+            <span><strong>Horario:</strong> Lunes a Viernes de 9:00 a 18:00 hrs.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-lg-4 col-md-12">
+        <h5 class="fw-bold mb-3 text-white">Enlaces Rápidos</h5>
+        <ul class="list-unstyled text-white-50 small d-flex flex-column gap-2">
+          <li>
+            <a routerLink="/" class="text-white-50 text-decoration-none d-flex align-items-center gap-2">
+              <i class="bi bi-chevron-right small text-white-50"></i> Inicio
+            </a>
+          </li>
+          <li>
+            <a routerLink="/servicios" class="text-white-50 text-decoration-none d-flex align-items-center gap-2">
+              <i class="bi bi-chevron-right small text-white-50"></i> Paquetes de Redes Sociales
+            </a>
+          </li>
+          <li>
+            <a routerLink="/nosotros" class="text-white-50 text-decoration-none d-flex align-items-center gap-2">
+              <i class="bi bi-chevron-right small text-white-50"></i> Quiénes Somos
+            </a>
+          </li>
+          <li>
+            <a routerLink="/publicaciones" class="text-white-50 text-decoration-none d-flex align-items-center gap-2">
+              <i class="bi bi-chevron-right small text-white-50"></i> Publicaciones
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="pt-3 text-center text-white-50 small">
+      <p class="mb-0">&copy; 2026 Marketing Manager. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>

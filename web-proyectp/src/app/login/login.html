@@ -1,0 +1,275 @@
+﻿<!-- Navbar principal integrado para navegación fluida -->
+<app-navbar></app-navbar>
+
+<div class="login-wrapper py-5">
+  <div class="container py-3">
+
+    <!-- Barra de navegación superior visible para regresar -->
+    <div class="mb-3 mx-auto" style="max-width: 500px;">
+      <a routerLink="/" class="btn btn-sm btn-outline-secondary bg-white shadow-sm d-inline-flex align-items-center gap-1">
+        <i class="bi bi-arrow-left"></i>
+        <span>Volver al Inicio</span>
+      </a>
+    </div>
+
+    <!-- Tarjeta Principal de Autenticación -->
+    <div class="card login-card mx-auto overflow-hidden" style="max-width: 500px;">
+      
+      <!-- Cabecera de la Tarjeta con Logo -->
+      <div class="p-4 text-center border-bottom bg-white">
+        <img src="imagenes/logo.jpeg" alt="Marketing Manager" width="48" height="48" class="rounded shadow-sm mb-2">
+        <h4 class="fw-bold mb-1" style="color: var(--primary);">Marketing Manager</h4>
+        <p class="text-muted small mb-0">Portal de Gestión Interna</p>
+      </div>
+
+      <div class="card-body p-4">
+
+        <!-- Selector de Pestañas Normal (Bootstrap Pills) -->
+        <ul class="nav nav-pills nav-fill p-1 bg-light rounded-3 mb-4">
+          <li class="nav-item">
+            <button type="button"
+                    class="nav-link py-2 fw-semibold d-flex align-items-center justify-content-center gap-1"
+                    [class.active]="activeTab === 'login'"
+                    (click)="setTab('login')">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Iniciar Sesión</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button type="button"
+                    class="nav-link py-2 fw-semibold d-flex align-items-center justify-content-center gap-1"
+                    [class.active]="activeTab === 'register'"
+                    (click)="setTab('register')">
+              <i class="bi bi-person-plus"></i>
+              <span>Registrarse</span>
+            </button>
+          </li>
+        </ul>
+
+        <!-- Alertas de Estado -->
+        @if (errorMessage) {
+          <div class="alert alert-danger alert-dismissible fade show shadow-sm small py-2 d-flex align-items-center gap-2 mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger flex-shrink-0"></i>
+            <div class="flex-grow-1">{{ errorMessage }}</div>
+            <button type="button" class="btn-close py-2" (click)="errorMessage = null" aria-label="Cerrar"></button>
+          </div>
+        }
+
+        @if (successMessage) {
+          <div class="alert alert-success alert-dismissible fade show shadow-sm small py-2 d-flex align-items-center gap-2 mb-3" role="alert">
+            <i class="bi bi-check-circle-fill text-success flex-shrink-0"></i>
+            <div class="flex-grow-1">{{ successMessage }}</div>
+            <button type="button" class="btn-close py-2" (click)="successMessage = null" aria-label="Cerrar"></button>
+          </div>
+        }
+
+        @if (infoMessage) {
+          <div class="alert alert-info alert-dismissible fade show shadow-sm small py-2 d-flex align-items-center gap-2 mb-3" role="alert">
+            <i class="bi bi-info-circle-fill text-info flex-shrink-0"></i>
+            <div class="flex-grow-1">{{ infoMessage }}</div>
+            <button type="button" class="btn-close py-2" (click)="infoMessage = null" aria-label="Cerrar"></button>
+          </div>
+        }
+
+        <!-- ============================================== -->
+        <!-- 1. FORMULARIO DE INICIO DE SESIÓN             -->
+        <!-- ============================================== -->
+        @if (activeTab === 'login') {
+          <form #loginForm="ngForm" (ngSubmit)="onLoginSubmit(loginForm)" novalidate>
+            
+            <div class="mb-3">
+              <label for="loginIdentifier" class="form-label small fw-bold text-muted">Usuario o Correo *</label>
+              <div class="input-group">
+                <span class="input-group-text text-muted"><i class="bi bi-person"></i></span>
+                <input type="text"
+                       class="form-control input-with-icon"
+                       id="loginIdentifier"
+                       name="identifier"
+                       [(ngModel)]="loginData.identifier"
+                       #identifier="ngModel"
+                       placeholder="admin o usuario@ejemplo.com"
+                       required
+                       [class.is-invalid]="identifier.invalid && (identifier.touched || loginSubmitted)">
+              </div>
+              @if (identifier.invalid && (identifier.touched || loginSubmitted)) {
+                <div class="text-danger small mt-1">Escribe tu usuario o correo.</div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label small fw-bold text-muted">Contraseña *</label>
+              <div class="input-group">
+                <span class="input-group-text text-muted"><i class="bi bi-lock"></i></span>
+                <input [type]="showPassword ? 'text' : 'password'"
+                       class="form-control input-with-icon"
+                       id="loginPassword"
+                       name="password"
+                       [(ngModel)]="loginData.password"
+                       #password="ngModel"
+                       placeholder="••••••••"
+                       required
+                       minlength="4"
+                       [class.is-invalid]="password.invalid && (password.touched || loginSubmitted)">
+                <button class="btn btn-outline-secondary bg-light" type="button" (click)="toggleShowPassword()" title="Ver u ocultar contraseña">
+                  <i class="bi" [class.bi-eye-slash]="showPassword" [class.bi-eye]="!showPassword"></i>
+                </button>
+              </div>
+              @if (password.invalid && (password.touched || loginSubmitted)) {
+                <div class="text-danger small mt-1">La contraseña es obligatoria.</div>
+              }
+            </div>
+
+            <div class="form-check mb-4">
+              <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" [(ngModel)]="loginData.rememberMe">
+              <label class="form-check-label text-muted small" for="rememberMe">
+                Mantener mi sesión activa
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" [disabled]="isLoading">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span>Iniciando sesión...</span>
+              } @else {
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>Iniciar Sesión</span>
+              }
+            </button>
+          </form>
+
+          <div class="text-center mt-3 pt-3 border-top">
+            <span class="text-muted small">¿No tienes cuenta? </span>
+            <a href="javascript:void(0)" (click)="setTab('register')" class="fw-bold text-decoration-none" style="color: var(--secondary);">Regístrate aquí</a>
+          </div>
+        }
+
+        <!-- ============================================== -->
+        <!-- 2. FORMULARIO DE REGISTRO                     -->
+        <!-- ============================================== -->
+        @if (activeTab === 'register') {
+          <form #regForm="ngForm" (ngSubmit)="onRegisterSubmit(regForm)" novalidate>
+            
+            <div class="row g-2 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold text-muted">Nombre *</label>
+                <input type="text"
+                       class="form-control"
+                       name="firstname"
+                       [(ngModel)]="registerData.firstname"
+                       #rFirst="ngModel"
+                       placeholder="Ej: María"
+                       required
+                       [class.is-invalid]="rFirst.invalid && (rFirst.touched || registerSubmitted)">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold text-muted">Apellido *</label>
+                <input type="text"
+                       class="form-control"
+                       name="lastname"
+                       [(ngModel)]="registerData.lastname"
+                       #rLast="ngModel"
+                       placeholder="Ej: García"
+                       required
+                       [class.is-invalid]="rLast.invalid && (rLast.touched || registerSubmitted)">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">Nombre de Usuario *</label>
+              <div class="input-group">
+                <span class="input-group-text text-muted"><i class="bi bi-at"></i></span>
+                <input type="text"
+                       class="form-control input-with-icon"
+                       name="regUsername"
+                       [(ngModel)]="registerData.username"
+                       #rUser="ngModel"
+                       placeholder="mariagarcia"
+                       required
+                       minlength="3"
+                       [class.is-invalid]="rUser.invalid && (rUser.touched || registerSubmitted)">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">Correo Electrónico *</label>
+              <div class="input-group">
+                <span class="input-group-text text-muted"><i class="bi bi-envelope"></i></span>
+                <input type="email"
+                       class="form-control input-with-icon"
+                       name="regEmail"
+                       [(ngModel)]="registerData.email"
+                       #rEmail="ngModel"
+                       placeholder="maria@empresa.com"
+                       required
+                       email
+                       [class.is-invalid]="rEmail.invalid && (rEmail.touched || registerSubmitted)">
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold text-muted">Teléfono</label>
+                <input type="tel"
+                       class="form-control"
+                       name="regPhone"
+                       [(ngModel)]="registerData.phone"
+                       placeholder="81-1234-5678">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold text-muted">Ciudad</label>
+                <input type="text"
+                       class="form-control"
+                       name="regCity"
+                       [(ngModel)]="registerData.city"
+                       placeholder="Córdoba">
+              </div>
+            </div>
+
+            <div class="row g-2 mb-4">
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold text-muted">Contraseña (Mín. 6) *</label>
+                <input [type]="showPassword ? 'text' : 'password'"
+                       class="form-control"
+                       name="regPassword"
+                       [(ngModel)]="registerData.password"
+                       #rPass="ngModel"
+                       placeholder="••••••••"
+                       required
+                       minlength="6"
+                       [class.is-invalid]="rPass.invalid && (rPass.touched || registerSubmitted)">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small fw-bold text-muted">Confirmar *</label>
+                <input [type]="showPassword ? 'text' : 'password'"
+                       class="form-control"
+                       name="regConfirmPassword"
+                       [(ngModel)]="registerData.confirmPassword"
+                       #rConfirm="ngModel"
+                       placeholder="••••••••"
+                       required
+                       [class.is-invalid]="(registerData.password !== registerData.confirmPassword) && (rConfirm.touched || registerSubmitted)">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" [disabled]="isLoading">
+              @if (isLoading) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span>Registrando...</span>
+              } @else {
+                <i class="bi bi-person-check-fill"></i>
+                <span>Completar Registro</span>
+              }
+            </button>
+          </form>
+
+          <div class="text-center mt-3 pt-3 border-top">
+            <span class="text-muted small">¿Ya tienes cuenta? </span>
+            <a href="javascript:void(0)" (click)="setTab('login')" class="fw-bold text-decoration-none" style="color: var(--secondary);">Inicia sesión aquí</a>
+          </div>
+        }
+
+      </div>
+    </div>
+
+  </div>
+</div>

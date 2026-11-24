@@ -1,0 +1,170 @@
+<section id="contacto" class="py-5" style="background-color: var(--bg-light);">
+  <div class="container py-4">
+    
+    <div class="row g-4 g-lg-5 align-items-center">
+      
+      <!-- Columna Izquierda: Mensaje y Beneficios -->
+      <div class="col-lg-5">
+        <span class="badge rounded-pill px-3 py-2 text-uppercase fw-bold mb-3" style="background-color: var(--secondary); color: white; letter-spacing: 0.5px;">
+          Contacto Directo
+        </span>
+        <h2 class="display-6 fw-bold mb-3" style="color: var(--primary);">
+          Hablemos sobre tu Marca
+        </h2>
+        <p class="text-muted mb-4">
+          ¿Tienes dudas sobre qué paquete elegir o buscas una cotización a la medida? Escríbenos y un asesor te responderá a la brevedad con una propuesta clara.
+        </p>
+
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-white text-primary shadow-sm p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; min-width: 44px;">
+              <i class="bi bi-clock-history fs-5"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark small">Respuesta en menos de 24 hrs</div>
+              <div class="text-muted small">Atención personalizada y propuesta sin compromiso.</div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-white text-success shadow-sm p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; min-width: 44px;">
+              <i class="bi bi-shield-check fs-5"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark small">Sin plazos forzosos</div>
+              <div class="text-muted small">Renovación mensual y manual según tus necesidades.</div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-white text-secondary shadow-sm p-2 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; min-width: 44px;">
+              <i class="bi bi-chat-dots-fill fs-5"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-dark small">Asesoría directa</div>
+              <div class="text-muted small">Resolvemos tus dudas antes de iniciar tu campaña.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Formulario con Efecto Flotante -->
+      <div class="col-lg-7">
+        <div class="card border-0 p-4 p-md-5 card-flotante">
+          
+          <h5 class="fw-bold mb-3" style="color: var(--primary);">
+            <i class="bi bi-envelope-paper me-2" style="color: var(--secondary);"></i>Envíanos un Mensaje
+          </h5>
+
+          @if (successMessage) {
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-3 py-2 rounded-3 small" role="alert">
+              <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+              <div><strong>¡Mensaje Enviado con Éxito!</strong> Te contactaremos a la brevedad.</div>
+            </div>
+          }
+
+          <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)" novalidate>
+            
+            <div class="row g-3">
+              
+              <!-- Nombre -->
+              <div class="col-md-6">
+                <label for="nombre" class="form-label fw-semibold text-dark small mb-1">Nombre Completo *</label>
+                <input type="text"
+                       class="form-control py-2 rounded-3"
+                       [class.is-invalid]="nombre.invalid && (nombre.dirty || nombre.touched || formSubmitted)"
+                       id="nombre"
+                       name="nombre"
+                       [(ngModel)]="formData.nombre"
+                       #nombre="ngModel"
+                       placeholder="Ej. Carlos Garza"
+                       required>
+                @if (nombre.invalid && (nombre.dirty || nombre.touched || formSubmitted)) {
+                  <div class="text-danger small mt-1">Por favor ingresa tu nombre completo.</div>
+                }
+              </div>
+
+              <!-- Correo -->
+              <div class="col-md-6">
+                <label for="correo" class="form-label fw-semibold text-dark small mb-1">Correo Electrónico *</label>
+                <input type="email"
+                       class="form-control py-2 rounded-3"
+                       [class.is-invalid]="correo.invalid && (correo.dirty || correo.touched || formSubmitted)"
+                       id="correo"
+                       name="correo"
+                       [(ngModel)]="formData.correo"
+                       #correo="ngModel"
+                       placeholder="carlos@empresa.com"
+                       required
+                       email>
+                @if (correo.invalid && (correo.dirty || correo.touched || formSubmitted)) {
+                  <div class="text-danger small mt-1">Por favor ingresa un correo válido.</div>
+                }
+              </div>
+
+              <!-- Teléfono -->
+              <div class="col-md-6">
+                <label for="telefono" class="form-label fw-semibold text-dark small mb-1">Teléfono / WhatsApp *</label>
+                <input type="tel"
+                       class="form-control py-2 rounded-3"
+                       [class.is-invalid]="telefono.invalid && (telefono.dirty || telefono.touched || formSubmitted)"
+                       id="telefono"
+                       name="telefono"
+                       [(ngModel)]="formData.telefono"
+                       #telefono="ngModel"
+                       placeholder="81 1234 5678"
+                       required>
+                @if (telefono.invalid && (telefono.dirty || telefono.touched || formSubmitted)) {
+                  <div class="text-danger small mt-1">Por favor ingresa tu número de contacto.</div>
+                }
+              </div>
+
+              <!-- Selector de Paquete -->
+              <div class="col-md-6">
+                <label for="paquete" class="form-label fw-semibold text-dark small mb-1">Paquete de Interés</label>
+                <select class="form-select py-2 rounded-3"
+                        id="paquete"
+                        name="paquete"
+                        [(ngModel)]="formData.paquete">
+                  <option value="Paquete Básico ($5,900 MXN/mes)">Paquete Básico — $5,900 MXN/mes</option>
+                  <option value="Paquete Profesional ($9,900 MXN/mes)">Paquete Profesional — $9,900 MXN/mes (Más Popular)</option>
+                  <option value="Paquete Premium ($15,900 MXN/mes)">Paquete Premium — $15,900 MXN/mes</option>
+                  <option value="Consulta Personalizada">Consulta Personalizada / Asesoría</option>
+                </select>
+              </div>
+
+              <!-- Comentario -->
+              <div class="col-12">
+                <label for="comentario" class="form-label fw-semibold text-dark small mb-1">Mensaje o Detalles de tu Negocio *</label>
+                <textarea class="form-control rounded-3 py-2"
+                          [class.is-invalid]="comentario.invalid && (comentario.dirty || comentario.touched || formSubmitted)"
+                          id="comentario"
+                          name="comentario"
+                          [(ngModel)]="formData.comentario"
+                          #comentario="ngModel"
+                          rows="3"
+                          placeholder="Cuéntanos el giro de tu empresa, dudas o metas..."
+                          required></textarea>
+                @if (comentario.invalid && (comentario.dirty || comentario.touched || formSubmitted)) {
+                  <div class="text-danger small mt-1">Por favor escribe un mensaje breve.</div>
+                }
+              </div>
+
+              <!-- Botón Submit -->
+              <div class="col-12 mt-3">
+                <button type="submit" class="btn-primary w-100 py-3 rounded-pill fw-semibold shadow-sm">
+                  <i class="bi bi-send me-1"></i> Enviar Mensaje
+                </button>
+              </div>
+
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

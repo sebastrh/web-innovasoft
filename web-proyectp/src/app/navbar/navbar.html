@@ -1,0 +1,53 @@
+﻿<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
+      <img src="imagenes/logo.jpeg" alt="Marketing Manager Logo" width="40" height="40" class="rounded shadow-sm">
+      <span class="fw-bold" style="color: var(--primary);">Marketing Manager</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegación">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center gap-lg-3 gap-2 py-2 py-lg-0">
+        <li class="nav-item">
+          <a class="nav-link fw-semibold" routerLink="/" routerLinkActive="active text-primary" [routerLinkActiveOptions]="{exact: true}">
+            <i class="bi bi-house-door me-1"></i> Inicio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold" routerLink="/servicios" routerLinkActive="active text-primary">
+            <i class="bi bi-briefcase me-1"></i> Servicios
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold" routerLink="/nosotros" routerLinkActive="active text-primary">
+            <i class="bi bi-people me-1"></i> Nosotros
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold" routerLink="/publicaciones" routerLinkActive="active text-primary">
+            <i class="bi bi-grid-3x3-gap me-1"></i> Publicaciones
+          </a>
+        </li>
+
+        <!-- Estado de Autenticación en Navbar -->
+        @if (!authService.isAuthenticated()) {
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-outline-primary btn-sm rounded-pill px-3 py-2 fw-semibold" routerLink="/gestion-interna">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+            </a>
+          </li>
+        } @else {
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-primary btn-sm rounded-pill px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-1" routerLink="/panel-interno">
+              <i class="bi bi-speedometer2"></i>
+              <span>Panel ({{ authService.currentUser()?.username }})</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>

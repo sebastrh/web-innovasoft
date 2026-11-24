@@ -1,0 +1,92 @@
+:root {
+  --primary: #2B324E;
+  --secondary: #5B82BB;
+  --primary-alt: #313E65;
+  --bg-light: #E3E7EA;
+  --text-main: #2B324E;
+  --white: #FFFFFF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Botones principales */
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-alt);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(43, 50, 78, 0.3);
+}
+
+.btn-large {
+  padding: 15px 35px;
+  font-size: 1.1rem;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary);
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid var(--primary);
+  cursor: pointer;
+  display: inline-block;
+}
+.btn-outline:hover {
+  background-color: var(--primary);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(43, 50, 78, 0.2);
+}
+
+
+.btn-outline-light-custom {
+  background-color: transparent;
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid var(--white);
+  cursor: pointer;
+  display: inline-block;
+}
+.btn-outline-light-custom:hover {
+  background-color: var(--white);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+

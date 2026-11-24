@@ -1,0 +1,119 @@
+﻿{
+  "apiName": "FakeStoreAPI - Users Resource",
+  "baseUrl": "https://fakestoreapi.com",
+  "resource": "/users",
+  "description": "API REST utilizada exclusivamente para la gestión y autenticación de usuarios en el portal Marketing Manager.",
+  "endpoints": [
+    {
+      "name": "Listar todos los usuarios",
+      "method": "GET",
+      "path": "/users",
+      "fullUrl": "https://fakestoreapi.com/users",
+      "description": "Obtiene la colección de usuarios disponibles para renderizado dinámico en la tabla del panel administrativo.",
+      "queryParams": {
+        "limit": "Opcional (número entero para limitar resultados, ej: ?limit=5)",
+        "sort": "Opcional (desc o asc para ordenar por ID)"
+      },
+      "headers": {
+        "Accept": "application/json"
+      },
+      "expectedStatus": 200,
+      "responseType": "Array<User>"
+    },
+    {
+      "name": "Obtener usuario por ID",
+      "method": "GET",
+      "path": "/users/:id",
+      "fullUrl": "https://fakestoreapi.com/users/1",
+      "description": "Obtiene el detalle completo de un usuario específico por su identificador numérico.",
+      "pathParams": {
+        "id": "Identificador único del usuario (ej: 1)"
+      },
+      "headers": {
+        "Accept": "application/json"
+      },
+      "expectedStatus": 200,
+      "responseType": "User"
+    },
+    {
+      "name": "Crear nuevo usuario",
+      "method": "POST",
+      "path": "/users",
+      "fullUrl": "https://fakestoreapi.com/users",
+      "description": "Registra un nuevo usuario en la plataforma. Valida formato de correo y contraseña antes del envío.",
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "requestBodyExample": {
+        "email": "nuevo.usuario@innovasoft.com",
+        "username": "nuevouser",
+        "password": "PasswordSegura123*",
+        "name": {
+          "firstname": "Carlos",
+          "lastname": "Pérez"
+        },
+        "address": {
+          "city": "Monterrey",
+          "street": "Av. Constitución",
+          "number": 100,
+          "zipcode": "64000",
+          "geolocation": {
+            "lat": "25.6866",
+            "long": "-100.3161"
+          }
+        },
+        "phone": "81-1234-5678"
+      },
+      "expectedStatus": 200,
+      "responseType": "{ id: number }"
+    },
+    {
+      "name": "Actualizar usuario",
+      "method": "PUT",
+      "path": "/users/:id",
+      "fullUrl": "https://fakestoreapi.com/users/1",
+      "description": "Actualiza la información de un usuario existente. Registra fecha y autor en la bitácora de auditoría.",
+      "pathParams": {
+        "id": "Identificador del usuario a modificar"
+      },
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "requestBodyExample": {
+        "email": "john.updated@gmail.com",
+        "username": "johnd_editado",
+        "password": "NewPassword2026*",
+        "name": {
+          "firstname": "John",
+          "lastname": "Doe Modificado"
+        },
+        "phone": "1-570-236-7033",
+        "address": {
+          "city": "Monterrey",
+          "street": "Av. Innovasoft",
+          "number": 500,
+          "zipcode": "64000"
+        }
+      },
+      "expectedStatus": 200,
+      "responseType": "User"
+    },
+    {
+      "name": "Eliminar usuario",
+      "method": "DELETE",
+      "path": "/users/:id",
+      "fullUrl": "https://fakestoreapi.com/users/1",
+      "description": "Elimina un usuario de la colección tras confirmar la acción en el modal de advertencia.",
+      "pathParams": {
+        "id": "Identificador del usuario a eliminar"
+      },
+      "headers": {
+        "Accept": "application/json"
+      },
+      "expectedStatus": 200,
+      "responseType": "User"
+    }
+  ]
+}

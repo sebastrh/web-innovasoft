@@ -1,0 +1,452 @@
+<div class="admin-layout">
+
+  <!-- Navbar Superior -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3 px-md-4 py-2 shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/">
+        <img src="imagenes/logo.jpeg" alt="Logo" width="32" height="32" class="rounded">
+        <span class="fw-bold">Marketing Manager</span>
+        <span class="badge bg-primary text-white ms-2 small">Panel Administrativo</span>
+      </a>
+
+      <div class="d-flex align-items-center gap-3 ms-auto">
+        <span class="text-white-50 small d-none d-md-inline">
+          Sesión: <strong class="text-white">{{ authService.currentUser()?.username || 'admin' }}</strong>
+        </span>
+
+        <a routerLink="/" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-globe me-1"></i> Ver Sitio
+        </a>
+
+        <button (click)="cerrarSesion()" class="btn btn-danger btn-sm">
+          <i class="bi bi-box-arrow-right me-1"></i> Salir
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido Principal -->
+  <main class="container py-4">
+
+    <!-- Selector de Sección / Pestañas Principales -->
+    <div class="d-flex gap-2 mb-4 border-bottom pb-3 flex-wrap">
+      <button class="btn rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2"
+              [class.btn-primary]="seccionActiva() === 'publicaciones'"
+              [class.btn-outline-secondary]="seccionActiva() !== 'publicaciones'"
+              (click)="cambiarSeccion('publicaciones')">
+        <i class="bi bi-grid-3x3-gap"></i>
+        <span>Publicaciones (MockAPI)</span>
+        <span class="badge bg-white text-dark ms-1 small">{{ publicaciones().length }}</span>
+      </button>
+
+      <button class="btn rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2"
+              [class.btn-primary]="seccionActiva() === 'usuarios'"
+              [class.btn-outline-secondary]="seccionActiva() !== 'usuarios'"
+              (click)="cambiarSeccion('usuarios')">
+        <i class="bi bi-people"></i>
+        <span>Usuarios (FakeStore)</span>
+        <span class="badge bg-white text-dark ms-1 small">{{ usuarios().length }}</span>
+      </button>
+    </div>
+
+    <!-- Alertas Globales -->
+    @if (mensajeExito()) {
+      <div class="alert alert-success alert-dismissible fade show mb-4 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> {{ mensajeExito() }}
+        <button type="button" class="btn-close" (click)="mensajeExito.set(null)" aria-label="Close"></button>
+      </div>
+    }
+
+    <!-- ============================================================= -->
+    <!-- SECCIÓN 1: CRUD PUBLICACIONES (MockAPI)                       -->
+    <!-- ============================================================= -->
+    @if (seccionActiva() === 'publicaciones') {
+      
+      <!-- Encabezado de Publicaciones -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Gestión de Publicaciones</h2>
+          <p class="text-muted mb-0">Contenido sincronizado con MockAPI (Redes Sociales)</p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary" (click)="cargarPublicaciones()" [disabled]="cargandoPubs()" title="Recargar">
+            <i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+          </button>
+          <button class="btn btn-primary" (click)="abrirCrearPub()">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Publicación
+          </button>
+        </div>
+      </div>
+
+      @if (errorPubs()) {
+        <div class="alert alert-danger d-flex justify-content-between align-items-center mb-4" role="alert">
+          <div>
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorPubs() }}
+          </div>
+          <button class="btn btn-sm btn-outline-danger" (click)="cargarPublicaciones()">Reintentar</button>
+        </div>
+      }
+
+      <!-- Buscador de Publicaciones -->
+      <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body p-3">
+          <div class="row align-items-center g-2">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input
+                  type="text"
+                  class="form-control border-start-0"
+                  placeholder="Buscar publicación por título, plataforma o tipo..."
+                  [value]="busquedaPubs()"
+                  (input)="busquedaPubs.set($any($event.target).value)">
+                @if (busquedaPubs()) {
+                  <button class="btn btn-outline-secondary" type="button" (click)="busquedaPubs.set('')">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="col-md-6 text-md-end text-muted small">
+              Mostrando <strong>{{ publicacionesFiltradas().length }}</strong> de <strong>{{ publicaciones().length }}</strong> publicaciones
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spinner o Tabla de Publicaciones -->
+      @if (cargandoPubs()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando publicaciones...</span>
+          </div>
+          <p class="text-muted mt-2">Cargando datos desde MockAPI...</p>
+        </div>
+      } @else {
+        <div class="card shadow-sm border-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col" style="width: 50px;">#</th>
+                  <th scope="col" style="width: 80px;">Vista</th>
+                  <th scope="col">Título</th>
+                  <th scope="col">Plataforma</th>
+                  <th scope="col">Tipo</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col" class="text-center" style="width: 190px;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (pub of publicacionesFiltradas(); track pub.id) {
+                  <tr>
+                    <td class="fw-bold text-muted">{{ pub.id }}</td>
+                    <td>
+                      <img [src]="pub.imagen" alt="Preview" width="48" height="48" class="rounded object-fit-cover border"
+                           (error)="$any($event.target).src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=150&q=80'">
+                    </td>
+                    <td>
+                      <strong>{{ pub.titulo }}</strong>
+                      <div class="text-muted small text-truncate" style="max-width: 320px;">{{ pub.descripcion }}</div>
+                    </td>
+                    <td>
+                      <span class="badge rounded-pill"
+                            [class.bg-primary]="pub.plataforma === 'Facebook'"
+                            [class.bg-danger]="pub.plataforma === 'Instagram'">
+                        <i class="bi" [class.bi-facebook]="pub.plataforma === 'Facebook'" [class.bi-instagram]="pub.plataforma === 'Instagram'"></i>
+                        {{ pub.plataforma }}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark border">{{ pub.tipo }}</span>
+                    </td>
+                    <td>{{ pub.fecha || 'Reciente' }}</td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-outline-primary me-2" (click)="abrirEditarPub(pub)" title="Editar">
+                        <i class="bi bi-pencil-square"></i> Editar
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" (click)="eliminarPublicacion(pub.id)" title="Eliminar">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                      <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                      No se encontraron publicaciones en MockAPI. Haz clic en "Nueva Publicación" para agregar una.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    }
+
+    <!-- ============================================================= -->
+    <!-- SECCIÓN 2: CRUD USUARIOS (FakeStore API)                      -->
+    <!-- ============================================================= -->
+    @if (seccionActiva() === 'usuarios') {
+      
+      <!-- Encabezado de Usuarios -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Gestión de Usuarios</h2>
+          <p class="text-muted mb-0">Usuarios registrados desde FakeStore API</p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary" (click)="cargarUsuarios()" [disabled]="cargando()" title="Recargar">
+            <i class="bi bi-arrow-clockwise me-1"></i> Actualizar
+          </button>
+          <button class="btn btn-primary" (click)="abrirCrear()">
+            <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
+          </button>
+        </div>
+      </div>
+
+      @if (error()) {
+        <div class="alert alert-danger d-flex justify-content-between align-items-center mb-4" role="alert">
+          <div>
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ error() }}
+          </div>
+          <button class="btn btn-sm btn-outline-danger" (click)="cargarUsuarios()">Reintentar</button>
+        </div>
+      }
+
+      <!-- Buscador de Usuarios -->
+      <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body p-3">
+          <div class="row align-items-center g-2">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input
+                  type="text"
+                  class="form-control border-start-0"
+                  placeholder="Buscar por nombre, usuario, correo o ciudad..."
+                  [value]="busqueda()"
+                  (input)="busqueda.set($any($event.target).value)">
+                @if (busqueda()) {
+                  <button class="btn btn-outline-secondary" type="button" (click)="busqueda.set('')">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                }
+              </div>
+            </div>
+            <div class="col-md-6 text-md-end text-muted small">
+              Mostrando <strong>{{ usuariosFiltrados().length }}</strong> de <strong>{{ usuarios().length }}</strong> usuarios
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spinner o Tabla de Usuarios -->
+      @if (cargando()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="text-muted mt-2">Cargando usuarios desde la API...</p>
+        </div>
+      } @else {
+        <div class="card shadow-sm border-0">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0">
+              <thead class="table-dark">
+                <tr>
+                  <th scope="col" style="width: 60px;">#</th>
+                  <th scope="col">Nombre Completo</th>
+                  <th scope="col">Usuario</th>
+                  <th scope="col">Correo Electrónico</th>
+                  <th scope="col">Teléfono</th>
+                  <th scope="col">Ciudad</th>
+                  <th scope="col" class="text-center" style="width: 190px;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of usuariosFiltrados(); track user.id) {
+                  <tr>
+                    <td class="fw-bold text-muted">{{ user.id }}</td>
+                    <td>
+                      <strong>{{ user.name?.firstname }} {{ user.name?.lastname }}</strong>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark border">@{{ user.username }}</span>
+                    </td>
+                    <td>
+                      <a [href]="'mailto:' + user.email" class="text-decoration-none">{{ user.email }}</a>
+                    </td>
+                    <td>{{ user.phone || 'N/A' }}</td>
+                    <td>{{ user.address?.city || 'N/A' }}</td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-outline-primary me-2" (click)="abrirEditar(user)" title="Editar">
+                        <i class="bi bi-pencil-square"></i> Editar
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" (click)="eliminarUsuario(user.id)" title="Eliminar">
+                        <i class="bi bi-trash"></i> Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                      <i class="bi bi-person-x fs-1 d-block mb-2"></i>
+                      No se encontraron usuarios que coincidan con la búsqueda.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+    }
+
+  </main>
+
+  <!-- ============================================================= -->
+  <!-- MODAL: CREAR / EDITAR PUBLICACIÓN (MockAPI)                   -->
+  <!-- ============================================================= -->
+  @if (modalPubAbierto()) {
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+              <i class="bi" [class.bi-plus-circle]="!editandoPub()" [class.bi-pencil-square]="editandoPub()"></i>
+              {{ editandoPub() ? 'Editar Publicación' : 'Nueva Publicación' }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="cerrarModalPub()" aria-label="Close"></button>
+          </div>
+          <form (ngSubmit)="guardarPublicacion()">
+            <div class="modal-body">
+              <div class="row g-3">
+                
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Título de la Publicación *</label>
+                  <input type="text" class="form-control" [(ngModel)]="formPub.titulo" name="tituloPub" required placeholder="Ej. Lanzamiento Campaña Verano">
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Descripción / Copy *</label>
+                  <textarea class="form-control" rows="3" [(ngModel)]="formPub.descripcion" name="descPub" required placeholder="Texto que acompaña al post..."></textarea>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label small fw-bold">URL de la Imagen / Portada</label>
+                  <input type="url" class="form-control" [(ngModel)]="formPub.imagen" name="imgPub" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Plataforma *</label>
+                  <select class="form-select" [(ngModel)]="formPub.plataforma" name="platPub" required>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                  </select>
+                </div>
+
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Tipo de Formato</label>
+                  <select class="form-select" [(ngModel)]="formPub.tipo" name="tipoPub">
+                    <option value="Imagen">Imagen individual</option>
+                    <option value="Carrusel">Carrusel</option>
+                    <option value="Reel">Reel / Video</option>
+                  </select>
+                </div>
+
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Fecha Programada</label>
+                  <input type="date" class="form-control" [(ngModel)]="formPub.fecha" name="fechaPub">
+                </div>
+
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Interacciones / Likes Estimados</label>
+                  <input type="number" class="form-control" [(ngModel)]="formPub.likes" name="likesPub">
+                </div>
+
+              </div>
+            </div>
+            <div class="modal-footer bg-light">
+              <button type="button" class="btn btn-secondary" (click)="cerrarModalPub()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="guardandoPub()">
+                @if (guardandoPub()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Guardar Publicación
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================= -->
+  <!-- MODAL: CREAR / EDITAR USUARIO (FakeStore API)                  -->
+  <!-- ============================================================= -->
+  @if (modalAbierto()) {
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+              <i class="bi" [class.bi-person-plus]="!editando()" [class.bi-pencil-square]="editando()"></i>
+              {{ editando() ? 'Editar Usuario' : 'Nuevo Usuario' }}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()" aria-label="Close"></button>
+          </div>
+          <form (ngSubmit)="guardarUsuario()">
+            <div class="modal-body">
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Nombre</label>
+                  <input type="text" class="form-control" [(ngModel)]="formUsuario.firstname" name="firstname" required placeholder="Ej. Juan">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Apellido</label>
+                  <input type="text" class="form-control" [(ngModel)]="formUsuario.lastname" name="lastname" required placeholder="Ej. Pérez">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Nombre de usuario</label>
+                  <input type="text" class="form-control" [(ngModel)]="formUsuario.username" name="username" required placeholder="Ej. juanperez">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Correo electrónico</label>
+                  <input type="email" class="form-control" [(ngModel)]="formUsuario.email" name="email" required placeholder="correo@ejemplo.com">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Teléfono</label>
+                  <input type="text" class="form-control" [(ngModel)]="formUsuario.phone" name="phone" placeholder="81-1234-5678">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-bold">Ciudad</label>
+                  <input type="text" class="form-control" [(ngModel)]="formUsuario.city" name="city" placeholder="Córdoba">
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Contraseña</label>
+                  <input type="text" class="form-control" [(ngModel)]="formUsuario.password" name="password" placeholder="Contraseña de acceso">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer bg-light">
+              <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+                @if (guardando()) {
+                  <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+                Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

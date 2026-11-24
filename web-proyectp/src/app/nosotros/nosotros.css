@@ -1,0 +1,59 @@
+/* Estilos dedicados para la página Nosotros */
+
+.nosotros-card {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  background-color: #ffffff;
+  border: 0;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.nosotros-img-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* En pantallas grandes, la imagen estira al 100% de la altura de la tarjeta sin márgenes blancos */
+@media (min-width: 992px) {
+  .nosotros-card > .row {
+    align-items: stretch !important;
+  }
+
+  .nosotros-img-col {
+    display: flex;
+    align-self: stretch;
+  }
+
+  .nosotros-img-container {
+    height: 100% !important;
+    min-height: 100% !important;
+    flex: 1;
+  }
+
+  .nosotros-img-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+}
+
+/* En pantallas móviles y tablets, la imagen tiene una altura fija proporcional */
+@media (max-width: 991.98px) {
+  .nosotros-img-container {
+    height: 280px;
+  }
+
+  .nosotros-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+}

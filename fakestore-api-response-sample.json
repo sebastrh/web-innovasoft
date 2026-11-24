@@ -1,0 +1,137 @@
+﻿{
+  "description": "Respuestas de ejemplo en formato JSON obtenidas en pruebas reales contra https://fakestoreapi.com/users",
+  "generatedAt": "2026-11-11T16:15:00.000Z",
+  "samples": {
+    "GET_all_users_status_200": [
+      {
+        "id": 1,
+        "email": "john@gmail.com",
+        "username": "johnd",
+        "password": "m38rmF$",
+        "name": {
+          "firstname": "john",
+          "lastname": "doe"
+        },
+        "address": {
+          "city": "kilcoole",
+          "street": "new road",
+          "number": 7682,
+          "zipcode": "12926-3874",
+          "geolocation": {
+            "lat": "-37.3159",
+            "long": "81.1496"
+          }
+        },
+        "phone": "1-570-236-7033",
+        "__v": 0
+      },
+      {
+        "id": 2,
+        "email": "morrison@gmail.com",
+        "username": "mor_2314",
+        "password": "83r5^_",
+        "name": {
+          "firstname": "david",
+          "lastname": "morrison"
+        },
+        "address": {
+          "city": "kilcoole",
+          "street": "Lovers Ln",
+          "number": 7267,
+          "zipcode": "12926-3874",
+          "geolocation": {
+            "lat": "-37.3159",
+            "long": "81.1496"
+          }
+        },
+        "phone": "1-570-236-7033",
+        "__v": 0
+      },
+      {
+        "id": 3,
+        "email": "kevin@gmail.com",
+        "username": "kevinryan",
+        "password": "kev02937@",
+        "name": {
+          "firstname": "kevin",
+          "lastname": "ryan"
+        },
+        "address": {
+          "city": "Cullman",
+          "street": "Frances Ct",
+          "number": 86,
+          "zipcode": "29567-1452",
+          "geolocation": {
+            "lat": "40.3467",
+            "long": "-30.1310"
+          }
+        },
+        "phone": "1-567-094-1345",
+        "__v": 0
+      }
+    ],
+    "GET_single_user_status_200": {
+      "id": 1,
+      "email": "john@gmail.com",
+      "username": "johnd",
+      "password": "m38rmF$",
+      "name": {
+        "firstname": "john",
+        "lastname": "doe"
+      },
+      "address": {
+        "city": "kilcoole",
+        "street": "new road",
+        "number": 7682,
+        "zipcode": "12926-3874",
+        "geolocation": {
+          "lat": "-37.3159",
+          "long": "81.1496"
+        }
+      },
+      "phone": "1-570-236-7033",
+      "__v": 0
+    },
+    "POST_create_user_status_200": {
+      "id": 11
+    },
+    "PUT_update_user_status_200": {
+      "email": "john.updated@gmail.com",
+      "username": "johnd_editado",
+      "password": "NewPassword2026*",
+      "name": {
+        "firstname": "John",
+        "lastname": "Doe Modificado"
+      },
+      "phone": "1-570-236-7033",
+      "address": {
+        "city": "Monterrey",
+        "street": "Av. Innovasoft",
+        "number": 500,
+        "zipcode": "64000"
+      }
+    },
+    "DELETE_user_status_200": {
+      "id": 1,
+      "email": "john@gmail.com",
+      "username": "johnd",
+      "password": "m38rmF$",
+      "name": {
+        "firstname": "john",
+        "lastname": "doe"
+      },
+      "address": {
+        "city": "kilcoole",
+        "street": "new road",
+        "number": 7682,
+        "zipcode": "12926-3874",
+        "geolocation": {
+          "lat": "-37.3159",
+          "long": "81.1496"
+        }
+      },
+      "phone": "1-570-236-7033",
+      "__v": 0
+    }
+  }
+}
