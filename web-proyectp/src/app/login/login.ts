@@ -148,9 +148,9 @@ export class Login implements OnInit {
         role: this.registerData.role
       });
 
-      this.successMessage = `${result.message} Redirigiendo al panel...`;
+      this.successMessage = `${result.message} Redirigiendo al sitio web...`;
       setTimeout(() => {
-        this.router.navigate(['/panel-interno']);
+        this.router.navigate(['/']);
       }, 1000);
     } catch (err: any) {
       this.errorMessage = err.message || 'No se pudo completar el registro.';

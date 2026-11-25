@@ -125,22 +125,31 @@ export class AuthService {
       role: data.role || 'usuario'
     };
 
-    let createdUser: User;
+    const fallbackId = Math.floor(Math.random() * 1000) + 20;
+    let apiId = fallbackId;
     try {
-      createdUser = await firstValueFrom(this.usersService.createUser(newUserPayload));
+      const apiResponse = await firstValueFrom(this.usersService.createUser(newUserPayload));
+      if (apiResponse?.id) {
+        apiId = apiResponse.id;
+      }
     } catch {
-      createdUser = {
-        id: Math.floor(Math.random() * 1000) + 20,
-        email: emailClean,
-        username: usernameClean,
-        name: {
-          firstname: data.firstname.trim(),
-          lastname: data.lastname.trim()
-        },
-        phone: data.phone?.trim() || '81-0000-0000',
-        role: data.role || 'usuario'
-      };
+      // Si la API externa falla, mantenemos la sesión local con el usuario registrado
     }
+
+    const createdUser: User = {
+      id: apiId,
+      email: emailClean,
+      username: usernameClean,
+      password: data.password,
+      passwordHash: passwordHash,
+      name: {
+        firstname: data.firstname.trim(),
+        lastname: data.lastname.trim()
+      },
+      phone: data.phone?.trim() || '81-0000-0000',
+      address: newUserPayload.address,
+      role: data.role || 'usuario'
+    };
 
     // Iniciar sesión automáticamente
     this.createSession(createdUser);

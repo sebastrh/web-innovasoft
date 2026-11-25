@@ -40,11 +40,26 @@
             </a>
           </li>
         } @else {
-          <li class="nav-item ms-lg-2">
-            <a class="btn btn-primary btn-sm rounded-pill px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-1" routerLink="/panel-interno">
-              <i class="bi bi-speedometer2"></i>
-              <span>Panel ({{ authService.currentUser()?.username }})</span>
-            </a>
+          <li class="nav-item dropdown ms-lg-2">
+            <button class="btn btn-primary btn-sm rounded-pill px-3 py-2 fw-semibold shadow-sm dropdown-toggle d-flex align-items-center gap-1" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i>
+              <span>{{ authService.currentUser()?.username }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="userMenuDropdown">
+              <li>
+                <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/panel-interno">
+                  <i class="bi bi-speedometer2 text-primary"></i>
+                  <span>Panel Interno</span>
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item d-flex align-items-center gap-2 text-danger" type="button" (click)="authService.logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </li>
+            </ul>
           </li>
         }
       </ul>
